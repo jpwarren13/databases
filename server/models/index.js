@@ -1,35 +1,41 @@
-var db = require('../db').dbConnection;
+const db = require('../db').dbConnection;
+const Promise = require('bluebird');
+
+// MODELS
+// MODELS
+// MODELS
+// MODELS
+// MODELS
 
 module.exports = {
   messages: {
-    get: () => {
-      // a function which produces all the messages
-      db.query('SELECT message FROM `messages`', (err, results) => {
+    // a function which produces all the messages
+    get: (callback) => {
+      db.query('SELECT message FROM messages', (err, results) => {
         if (err) {
-          console.error(err);
+          throw err;
         } else {
-          console.log(results);
-          return results;
+          callback(null, results);
         }
       });
-      // console.log('Hi Model Get DB');
     },
     // a function which can be used to insert a message into the database
-    post: (message) => {      
-      db.query('INSERT INTO `messages` (`message`, `userID`, `roomID`) VALUES (`${message}`, 1, 1)', (err) => {
+    post: (message, callback) => {
+      let user = message.username;
+      let text = message.text;
+      let room = message.roomname;
+
+      db.query(`INSERT INTO messages (message, user, room) VALUES ("${text}", "${user}", "${room}");`, (err) => {
         if (err) {
           console.error(err);
         } else {
-          console.log('Message inserted!');
+          callback();
         }
       });
     }
-  },
-
-  users: {
-    // Ditto as above.
-    get: function () {},
-    post: function () {}
   }
+  // users: {
+  //   get: function () {},
+  //   post: function () {}
+  // }
 };
-
